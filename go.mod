@@ -1,3 +1,3 @@
-module github.com/sarvang00/GoldenFlask
+module GoldenFlask
 
 go 1.18
