@@ -31,8 +31,25 @@ func checkErr(err error) {
 }
 
 func getAnchorTags(httpStringContent string) []string {
-	regexPattern := `<a.*>.*</a>`
+	regexPattern := "<a.*>.*</a>"
 	re := regexp.MustCompile(regexPattern)
 	matchedTags := re.FindAllString(httpStringContent, -1)
+	matchedTags = removeDuplicateStrings(matchedTags)
 	return matchedTags
+}
+
+func removeDuplicateStrings(anchors []string) []string {
+	keys := make(map[string]bool)
+	list := []string{}
+
+	// If the key(values of the slice) is not equal
+	// to the already present value in new slice (list)
+	// then we append it. else we jump on another element.
+	for _, entry := range anchors {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
 }
