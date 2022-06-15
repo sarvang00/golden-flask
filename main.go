@@ -18,7 +18,7 @@ func main() {
 	content := string(body)
 
 	// fmt.Println(content)
-	parsedTagData := parseAnchorTags(content)
+	parsedTagData := getAnchorTags(content)
 	for tagData := range parsedTagData {
 		fmt.Println(parsedTagData[tagData])
 	}
@@ -30,8 +30,8 @@ func checkErr(err error) {
 	}
 }
 
-func parseAnchorTags(httpStringContent string) []string {
-	regexPattern := `<a.*>.*</a>|<a.*/>`
+func getAnchorTags(httpStringContent string) []string {
+	regexPattern := `<a.*>.*</a>`
 	re := regexp.MustCompile(regexPattern)
 	matchedTags := re.FindAllString(httpStringContent, -1)
 	return matchedTags
