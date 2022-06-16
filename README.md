@@ -9,20 +9,9 @@ Instead, we will keep the url such that we will just parse through the url input
 in CLI and store it at the location specified.
 
 ## Excluded file
-The module gvars present in ./ is excluded. It has a struct and the values stored in struct.
+The module ```gvars``` present in ./ is excluded. It has a variable ```AudioBooksDatabase```, which is an array of AudioBook struct.
 
-The struct was:
-```
-type AudioBook struct {
-	BookName  string
-	Author    string
-	Reader    string
-	HomeUrl   string
-	StorePath string
-}
-```
-
-The variable ```AudioBooksDatabase``` is an array of AudioBook struct. This may be restructured later for better visibility and understanding.
+The struct ```AudioBook``` is now a seperate package, sepearted grom ```gvars```.
 
 ## Credits
 Credit to [nevermosby](https://gist.github.com/nevermosby) for creating code to [concurrently download content](https://gist.github.com/nevermosby/b54d473ea9153bb75eebd14d8d816544) from given URL. It was quite helpful.
