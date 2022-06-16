@@ -20,6 +20,7 @@ type AudioBook struct {
 // Function to download an audiobook
 func (ab *AudioBook) DownloadAudiobook() {
 	audioBooks := []string{}
+	pagesUrls := []string{}
 	downloadPath := "./"
 	if ab.Reader != "" {
 		downloadPath = ab.BookName + "-" + ab.Author + "/" + ab.Reader
@@ -28,7 +29,24 @@ func (ab *AudioBook) DownloadAudiobook() {
 	}
 
 	// Step-1: Loop through paginator; end in case of error
+	for i := 0; ; i++ {
+		var resp *http.Response
+		var err error
+		var url string
+		if i == 0 {
+			url = ab.AudioUrl
+		} else {
+			url = fmt.Sprintf("%s/%d", ab.AudioUrl, i)
+		}
+		resp, err = http.Get(url)
 
+		if err != nil || resp.StatusCode == http.StatusNotFound {
+			fmt.Println("Page finding error")
+			break
+		} else {
+			pagesUrls = append(pagesUrls, url)
+		}
+	}
 	// Step-2: Find and loop through to find mp3 urls; add them to an array of strings
 
 	// Step-3: Download mp3 files at a location (BookName-Author/Reader); update StorePath with location
