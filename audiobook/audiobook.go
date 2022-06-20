@@ -19,39 +19,47 @@ type AudioBook struct {
 
 // Function to download an audiobook
 func (ab *AudioBook) DownloadAudiobook() {
-	audioBooks := []string{}
+	// audioBooks := []string{}
 	pagesUrls := []string{}
-	downloadPath := "./"
-	if ab.Reader != "" {
-		downloadPath = ab.BookName + "-" + ab.Author + "/" + ab.Reader
-	} else {
-		downloadPath = ab.BookName + "-" + ab.Author
-	}
+	// downloadPath := "./"
+	// if ab.Reader != "" {
+	// 	downloadPath = ab.BookName + "-" + ab.Author + "/" + ab.Reader
+	// } else {
+	// 	downloadPath = ab.BookName + "-" + ab.Author
+	// }
 
 	// Step-1: Loop through paginator; end in case of error
-	for i := 0; ; i++ {
+	for i := 1; ; i++ {
 		var resp *http.Response
 		var err error
 		var url string
-		if i == 0 {
+		if i == 1 {
 			url = ab.AudioUrl
 		} else {
-			url = fmt.Sprintf("%s/%d", ab.AudioUrl, i)
+			url = fmt.Sprintf("%s%d/", ab.AudioUrl, i)
 		}
 		resp, err = http.Get(url)
 
-		if err != nil || resp.StatusCode == http.StatusNotFound {
-			fmt.Println("Page finding error")
+		if (resp.Request.URL.String() != url) || (err != nil || resp.StatusCode != 200) {
+			fmt.Println("Page finding broke")
 			break
 		} else {
 			pagesUrls = append(pagesUrls, url)
 		}
+		fmt.Println(resp.StatusCode)
+		fmt.Println("found ", url)
+		fmt.Println("is ", resp.Request.URL.String())
 	}
+
 	// Step-2: Find and loop through to find mp3 urls; add them to an array of strings
+	for i := 0; i < len(pagesUrls); i++ {
+		fmt.Println(pagesUrls[i])
+		// Find mp3 files by regex and add them to audioBooks
+	}
 
 	// Step-3: Download mp3 files at a location (BookName-Author/Reader); update StorePath with location
-	DownloadAudios(audioBooks, downloadPath)
-	ab.StorePath = downloadPath
+	// DownloadAudios(audioBooks, downloadPath)
+	// ab.StorePath = downloadPath
 }
 
 // Function to download audioclips to a specified folder
