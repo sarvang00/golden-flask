@@ -3,9 +3,12 @@ package audiobook
 import (
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"regexp"
+	"strings"
 	"sync"
 )
 
@@ -19,7 +22,7 @@ type AudioBook struct {
 
 // Function to download an audiobook
 func (ab *AudioBook) DownloadAudiobook() {
-	// audioBooks := []string{}
+	audioBooks := []string{}
 	pagesUrls := []string{}
 	// downloadPath := "./"
 	// if ab.Reader != "" {
@@ -53,15 +56,37 @@ func (ab *AudioBook) DownloadAudiobook() {
 
 	// Step-2: Find and loop through to find mp3 urls; add them to an array of strings
 	for i := 0; i < len(pagesUrls); i++ {
-		fmt.Println(pagesUrls[i])
-		// Find mp3 files by regex and add them to audioBooks
-		// regex for mp3 files on each page:
-		// href=".*.mp3"
+		// Find mp3 files by regex on each page and add them to audioBooks
+		audioBooks = append(audioBooks, GetMp3UrlsFromPage(pagesUrls[i])...)
 	}
+	fmt.Println(audioBooks)
 
 	// Step-3: Download mp3 files at a location (BookName-Author/Reader); update StorePath with location
 	// DownloadAudios(audioBooks, downloadPath)
 	// ab.StorePath = downloadPath
+}
+
+// Function to get Urls of MP3 files from the page
+func GetMp3UrlsFromPage(url string) []string {
+	bookUrls := []string{}
+	resp, err := http.Get(url)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	content, _ := ioutil.ReadAll(resp.Body)
+	contentString := string(content)
+
+	// regex for mp3 files on each page:
+	re := regexp.MustCompile(`href=".*.mp3"`)
+	for _, urlString := range re.FindAllString(contentString, -1) {
+		urlString = urlString[5:]
+		urlString = strings.Trim(urlString, `"`)
+		bookUrls = append(bookUrls, urlString)
+	}
+
+	return bookUrls
 }
 
 // Function to download audioclips to a specified folder
@@ -95,6 +120,5 @@ func DownloadAudios(urls []string, downloadLocation string) {
 			}
 		}(url)
 	}
-
 	wg.Wait()
 }
