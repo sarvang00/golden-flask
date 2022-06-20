@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"sync"
+	"time"
 )
 
 type AudioBook struct {
@@ -22,6 +23,7 @@ type AudioBook struct {
 
 // Function to download an audiobook
 func (ab *AudioBook) DownloadAudiobook() {
+	abStart := time.Now()
 	audioBooks := []string{}
 	pagesUrls := []string{}
 	downloadPath := "./DownloadedContent/"
@@ -66,10 +68,14 @@ func (ab *AudioBook) DownloadAudiobook() {
 	// Step-3: Download mp3 files at a location (BookName-Author/Reader); update StorePath with location
 	DownloadAudios(audioBooks, downloadPath)
 	ab.StorePath = downloadPath
+
+	abSecs := time.Since(abStart).Seconds()
+	fmt.Printf("\nAudiobook time: %.2fs\n", abSecs)
 }
 
 // Function to get Urls of MP3 files from the page
 func GetMp3UrlsFromPage(url string) []string {
+	urlFetchStart := time.Now()
 	bookUrls := []string{}
 	resp, err := http.Get(url)
 	if err != nil {
@@ -88,11 +94,15 @@ func GetMp3UrlsFromPage(url string) []string {
 		bookUrls = append(bookUrls, urlString)
 	}
 
+	urlSecs := time.Since(urlFetchStart).Seconds()
+	fmt.Printf("\nURL fetch time: %.2fs\n", urlSecs)
+
 	return bookUrls
 }
 
 // Function to download audioclips to a specified folder
 func DownloadAudios(urls []string, downloadLocation string) {
+	downStartTime := time.Now()
 	var wg sync.WaitGroup
 	wg.Add(len(urls))
 
@@ -129,4 +139,6 @@ func DownloadAudios(urls []string, downloadLocation string) {
 		}(url, iter)
 	}
 	wg.Wait()
+	downSecs := time.Since(downStartTime).Seconds()
+	fmt.Printf("\nURL fetch time: %.2fs\n", downSecs)
 }
