@@ -59,7 +59,8 @@ func (ab *AudioBook) DownloadAudiobook() {
 		// Find mp3 files by regex on each page and add them to audioBooks
 		audioBooks = append(audioBooks, GetMp3UrlsFromPage(pagesUrls[i])...)
 	}
-	fmt.Println(audioBooks)
+
+	// fmt.Println(audioBooks)
 
 	// Step-3: Download mp3 files at a location (BookName-Author/Reader); update StorePath with location
 	// DownloadAudios(audioBooks, downloadPath)
