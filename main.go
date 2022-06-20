@@ -7,7 +7,10 @@ import (
 
 func main() {
 	fmt.Println("Scraping for AudioBooks in given Urls")
-	fmt.Println(gvars.AudioBooksDatabase)
+	// fmt.Println(gvars.AudioBooksDatabase)
+	for _, value := range gvars.AudioBooksDatabase {
+		value.DownloadAudiobook()
+	}
 }
 
 func checkErr(err error) {
