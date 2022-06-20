@@ -101,13 +101,11 @@ func DownloadAudios(urls []string, downloadLocation string) {
 		log.Println(err)
 	}
 
-	iter := 1
-	for _, url := range urls {
-		go func(url string) {
+	for iter, url := range urls {
+		go func(url string, iter int) {
 			defer wg.Done()
 
-			fileName := fmt.Sprintf("%s/chapter%d.mp3", downloadLocation, iter)
-			iter += 1
+			fileName := fmt.Sprintf("%s/chapter%d.mp3", downloadLocation, iter+1)
 			fmt.Println("Downloading", url, "to", fileName)
 
 			output, err := os.Create(fileName)
@@ -128,7 +126,7 @@ func DownloadAudios(urls []string, downloadLocation string) {
 					fmt.Println("Downloaded", fileName)
 				}
 			}
-		}(url)
+		}(url, iter)
 	}
 	wg.Wait()
 }
