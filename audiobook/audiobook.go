@@ -24,7 +24,7 @@ type AudioBook struct {
 func (ab *AudioBook) DownloadAudiobook() {
 	audioBooks := []string{}
 	pagesUrls := []string{}
-	downloadPath := "./DownloadedContent"
+	downloadPath := "./DownloadedContent/"
 	if ab.Reader != "" {
 		downloadPath += ab.BookName + "-" + ab.Author + "/" + ab.Reader
 	} else {
