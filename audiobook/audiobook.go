@@ -41,14 +41,14 @@ func (ab *AudioBook) DownloadAudiobook() {
 		resp, err = http.Get(url)
 
 		if (resp.Request.URL.String() != url) || (err != nil || resp.StatusCode != 200) {
-			fmt.Println("Page finding broke")
+			// fmt.Println("Page finding broke")
 			break
 		} else {
 			pagesUrls = append(pagesUrls, url)
 		}
-		fmt.Println(resp.StatusCode)
-		fmt.Println("found ", url)
-		fmt.Println("is ", resp.Request.URL.String())
+		// fmt.Println(resp.StatusCode)
+		// fmt.Println("found ", url)
+		// fmt.Println("is ", resp.Request.URL.String())
 	}
 
 	// Step-2: Find and loop through to find mp3 urls; add them to an array of strings
