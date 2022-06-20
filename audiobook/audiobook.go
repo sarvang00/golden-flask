@@ -24,12 +24,13 @@ type AudioBook struct {
 func (ab *AudioBook) DownloadAudiobook() {
 	audioBooks := []string{}
 	pagesUrls := []string{}
-	// downloadPath := "./"
-	// if ab.Reader != "" {
-	// 	downloadPath = ab.BookName + "-" + ab.Author + "/" + ab.Reader
-	// } else {
-	// 	downloadPath = ab.BookName + "-" + ab.Author
-	// }
+	downloadPath := "./DownloadedContent"
+	if ab.Reader != "" {
+		downloadPath += ab.BookName + "-" + ab.Author + "/" + ab.Reader
+	} else {
+		downloadPath += ab.BookName + "-" + ab.Author
+	}
+	downloadPath = strings.Trim(downloadPath, `'`)
 
 	// Step-1: Loop through paginator; end in case of error
 	for i := 1; ; i++ {
@@ -63,8 +64,8 @@ func (ab *AudioBook) DownloadAudiobook() {
 	// fmt.Println(audioBooks)
 
 	// Step-3: Download mp3 files at a location (BookName-Author/Reader); update StorePath with location
-	// DownloadAudios(audioBooks, downloadPath)
-	// ab.StorePath = downloadPath
+	DownloadAudios(audioBooks, downloadPath)
+	ab.StorePath = downloadPath
 }
 
 // Function to get Urls of MP3 files from the page
@@ -95,10 +96,18 @@ func DownloadAudios(urls []string, downloadLocation string) {
 	var wg sync.WaitGroup
 	wg.Add(len(urls))
 
-	for iter, url := range urls {
+	err := os.MkdirAll(downloadLocation, os.ModePerm)
+	if err != nil {
+		log.Println(err)
+	}
+
+	iter := 1
+	for _, url := range urls {
 		go func(url string) {
 			defer wg.Done()
-			fileName := fmt.Sprintf("%s/chapter%d.mp3", downloadLocation, iter+1)
+
+			fileName := fmt.Sprintf("%s/chapter%d.mp3", downloadLocation, iter)
+			iter += 1
 			fmt.Println("Downloading", url, "to", fileName)
 
 			output, err := os.Create(fileName)
